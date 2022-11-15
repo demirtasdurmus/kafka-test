@@ -1,0 +1,29 @@
+version: '2'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+  kafka:
+    image: wurstmeister/kafka:latest
+    # deploy:
+    #   replicas: 2
+    # container_name: kafka
+    ports:
+      - "9092:9092"
+    links:
+      - zookeeper
+    environment:
+      # KAFKA_BROKER_ID: 1
+      KAFKA_ADVERTISED_HOST_NAME: 'localhost'
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      # KAFKA_CREATE_TOPICS: "topic-test:1:1"
+      # KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_BOB
+      # KAFKA_LISTENERS: LISTENER_BOB://kafka:29092,LISTENER_FRED://localhost:9092
+      # KAFKA_ADVERTISED_LISTENERS: LISTENER_BOB://kafka:29092,LISTENER_FRED://localhost:9092
+      # KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LISTENER_BOB:PLAINTEXT,LISTENER_FRED:PLAINTEXT
+      # KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      # KAFKA_DELETE_TOPIC_ENABLE: 'true'
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
