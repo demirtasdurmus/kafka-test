@@ -13,7 +13,7 @@ app.post("/create", (req, res, next) => {
         lastName: "Demirtaş",
         email: "demirtasdurmus@gmail.com"
     }
-    new UserCreatedProducer(kafkaClient.createProducer()).produce(user)
+    new UserCreatedProducer(kafkaClient.producer).produce(user)
     res.send({ message: 'created' })
 })
 
@@ -22,7 +22,7 @@ app.post("/update", (req, res, next) => {
         id: "test-user",
         isVerified: true
     }
-    new UserUpdatedProducer(kafkaClient.createProducer()).produce(user)
+    new UserUpdatedProducer(kafkaClient.producer).produce(user)
     res.send({ message: 'updated' })
 })
 

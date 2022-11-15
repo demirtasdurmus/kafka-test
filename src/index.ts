@@ -10,12 +10,12 @@ kafkaClient.config({
     brokers: ['kafka-broker:9092'],
     logLevel: logLevel.NOTHING
 })
+// create a common producer instance in global
+kafkaClient.createProducer()
 
-const setUpConsumers = () => {
-    new UserCreatedConsumer(kafkaClient.createConsumer({ groupId: 'test-group-one' })).consume().catch(err => console.error(err))
-    new UserUpdatedConsumer(kafkaClient.createConsumer({ groupId: 'test-group-two' })).consume().catch(err => console.error(err))
-}
-setUpConsumers()
+// set up consumers
+new UserCreatedConsumer(kafkaClient.createConsumer({ groupId: 'test-group-one' })).consume().catch(err => console.error(err))
+new UserUpdatedConsumer(kafkaClient.createConsumer({ groupId: 'test-group-two' })).consume().catch(err => console.error(err))
 
 app.listen(8000, () => {
     console.log("Server is awake on port 8000")
