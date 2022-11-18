@@ -10,7 +10,7 @@ interface Event {
 export abstract class BaseConsumer<T extends Event> {
     abstract topic: T['topic']
     abstract fromBeginning: boolean
-    abstract onMessage(message: T['message'], payload: EachMessagePayload): void
+    abstract onMessage(message: T['message'], payload: EachMessagePayload): Promise<void>
     protected consumer: Consumer
 
     constructor(consumer: Consumer) {
@@ -26,7 +26,7 @@ export abstract class BaseConsumer<T extends Event> {
             })
             await this.consumer.run({
                 eachMessage: async (payload: EachMessagePayload) => {
-                    this.onMessage(this.parseMessage(payload.message), payload)
+                    await this.onMessage(this.parseMessage(payload.message), payload)
                 },
             })
             console.log("Kafka Consumer started listening on topic:", this.topic)

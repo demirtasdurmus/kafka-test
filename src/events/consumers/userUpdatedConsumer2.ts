@@ -5,13 +5,11 @@ import { Topics } from "../../types/topics"
 
 
 
-export class UserUpdatedConsumer extends BaseConsumer<UserUpdatedEvent> {
+export class UserUpdatedConsumer2 extends BaseConsumer<UserUpdatedEvent> {
     readonly topic: Topics.UserUpdated = Topics.UserUpdated
     readonly fromBeginning = true
 
     onMessage = async (message: UserUpdatedEvent['message'], payload: EachMessagePayload) => {
-        console.log("Event received User.updated:", payload.message.key?.toString())
-        console.log("Event received User.updated:", message)
-        console.log("Event received User.updated:", payload)
+        console.log("Event received User.updated2:", this.topic, payload.partition, payload)
     }
 }

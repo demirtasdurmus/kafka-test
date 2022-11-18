@@ -10,6 +10,8 @@ export class UserCreatedConsumer extends BaseConsumer<UserCreatedEvent> {
     readonly fromBeginning = true
 
     onMessage = async (message: UserCreatedEvent['message'], payload: EachMessagePayload) => {
-        console.log("Event received User.created:", this.topic, message)
+        console.log("Event received User.created:", payload.message.key?.toString())
+        console.log("Event received User.created:", message)
+        console.log("Event received User.created:", payload)
     }
 }
