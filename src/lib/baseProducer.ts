@@ -5,13 +5,7 @@ import { Topics } from '../types/topics'
 import { ACKS } from '../types/acks'
 interface Event {
     topic: Topics
-    message: {
-        key?: Buffer | string | null
-        partition?: number
-        headers?: IHeaders
-        timestamp?: string
-        value: any
-    }
+    message: any
 }
 
 export abstract class BaseProducer<T extends Event> {
