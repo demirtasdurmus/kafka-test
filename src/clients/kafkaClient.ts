@@ -5,50 +5,104 @@ class KafkaClient {
     private _kafka?: Kafka
     private _producer?: Producer
     private _consumer?: Consumer
+    private producerConnected: boolean = false
+    private consumerConnected: boolean = false
 
-    // if you want to use a uniform producer instance call this getter
-    get producer() {
-        if (!this._producer) throw new Error('Please create a provider with <createProducer> method first')
+    /**
+     * a single producer instance
+     */
+    public get producer(): Producer {
+        if (!this._producer) throw new Error('Please create a producer instance with <createProducer> method first')
         return this._producer
     }
 
-    // if you want to use a uniform consumer instance call this getter
-    get consumer() {
-        if (!this._consumer) throw new Error('Please create a consumer with <createConsumer> method first')
+    /**
+     * a single consumer instance
+     */
+    public get consumer(): Consumer {
+        if (!this._consumer) throw new Error('Please create a consumer instance with <createConsumer> method first')
         return this._consumer
     }
 
-    // configure Kafka client with necessary credentials 
-    public config = (config: KafkaConfig) => {
+    /**
+     * configures Kafka client
+     * 
+     * @param config - Kafka config options
+     * 
+     * @returns void 
+     */
+    public config(config: KafkaConfig): void {
         this._kafka = new Kafka(config)
     }
 
-    // create a producer instance for class itself and also return
-    public createProducer = (config?: ProducerConfig | undefined): Producer => {
+    /**
+     * creates a producer instance
+     * 
+     * @param config - Kafka Producer config options or undefined
+     * 
+     * @returns a Producer instance
+     */
+    public createProducer(config?: ProducerConfig | undefined): Producer {
         if (!this._kafka) throw new Error('Configure Kafka first with <config> method')
         this._producer = this._kafka!.producer(config)
         return this._producer
     }
 
-    // create a consumer instance for class itself and also return
-    public createConsumer = (config: ConsumerConfig): Consumer => {
+    /**
+     * creates a consumer instance for class
+     * 
+     * @param config - Kafka Consumer config options
+     * 
+     * @returns a Consumer instance
+     */
+    public createConsumer(config: ConsumerConfig): Consumer {
         if (!this._kafka) throw new Error('Configure Kafka first with <config> method')
         this._consumer = this._kafka!.consumer(config)
         return this._consumer
     }
 
-    // disconnect the common producer
-    public shutdownProducer = async (): Promise<void> => {
-        if (!this._producer) throw new Error('Kafka producer is not connected to any brokers')
-        console.log("Shutting down the Kafka producer...")
-        await this._producer.disconnect()
+    /**
+     * connects to a Kafka producer
+     * 
+     * @returns void
+     */
+    public async connectProducer(): Promise<void> {
+        if (!this._producer) throw new Error('Please create a producer instance with <createProducer> method first')
+        await this._producer.connect()
+        this.producerConnected = true
     }
 
-    // disconnect the common consumer
-    public shutdownConsumer = async (): Promise<void> => {
-        if (!this._consumer) throw new Error('Kafka consumer is not connected to any brokers')
+    /**
+     * connectConsumer
+     */
+    public async connectConsumer(): Promise<void> {
+        if (!this._consumer) throw new Error('Please create a consumer instance with <createProducer> method first')
+        await this._consumer.connect()
+        this.consumerConnected = true
+    }
+
+    /**
+     * disconnects the connected producer if there is one
+     * 
+     * @returns void
+     */
+    public async shutdownProducer(): Promise<void> {
+        if (!this._producer || !this.producerConnected) return
+        console.log("Shutting down the Kafka producer...")
+        await this._producer.disconnect()
+        this.producerConnected = false
+    }
+
+    /**
+     * disconnects the connected consumer if there is one
+     * 
+     * @returns void
+     */
+    public async shutdownConsumer(): Promise<void> {
+        if (!this._consumer || !this.consumerConnected) return
         console.log("Shutting down the Kafka producer...")
         await this._consumer.disconnect()
+        this.consumerConnected = false
     }
 }
 

@@ -18,7 +18,6 @@ export abstract class BaseProducer<T extends Event> {
 
     public produce = async (messages: T['message'][], config?: SenderConfig) => {
         try {
-            await this.producer.connect()
             console.log("Producing an event on topic:", this.topic)
             return await this.producer.send({
                 /*
